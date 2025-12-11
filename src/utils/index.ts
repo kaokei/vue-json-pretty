@@ -17,6 +17,7 @@ export type JSONDataType = string | number | boolean | unknown[] | Record<string
 
 export interface JSONFlattenReturnType extends JSONFlattenOptions {
   content: string | number | null | boolean;
+  contentDataType: string;
   level: number;
   path: string;
 }
@@ -111,6 +112,7 @@ export function jsonFlatten(
   return [
     {
       content: data as JSONFlattenReturnType['content'],
+      contentDataType: dataType,
       level,
       key,
       index,

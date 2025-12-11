@@ -149,7 +149,7 @@ export default defineComponent({
   ],
 
   setup(props, { emit }) {
-    const dataType = computed<string>(() => getDataType(props.node.content));
+    const dataType = computed<string>(() => props.node.contentDataType);
 
     const valueClass = computed(() => `vjs-value vjs-value-${dataType.value}`);
 

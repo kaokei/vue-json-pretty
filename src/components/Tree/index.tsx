@@ -198,6 +198,7 @@ export default defineComponent({
             ...startHiddenItem,
             showComma: item.showComma,
             content: isObject ? '{...}' : '[...]',
+            contentDataType: 'string',
             type: isObject ? 'objectCollapsed' : 'arrayCollapsed',
           } as NodeDataType;
           startHiddenItem = null;
