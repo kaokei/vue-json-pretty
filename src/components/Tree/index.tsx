@@ -70,6 +70,9 @@ export default defineComponent({
       type: String as PropType<'light' | 'dark'>,
       default: 'light',
     },
+    replacer: {
+      type: Function as PropType<(key?: string | symbol, value?: unknown) => [string, unknown]>,
+    },
   },
 
   slots: ['renderNodeKey', 'renderNodeValue', 'renderNodeActions'],
@@ -87,7 +90,7 @@ export default defineComponent({
   setup(props, { emit, slots }) {
     const treeRef = ref<HTMLElement>();
 
-    const originFlatData = computed(() => jsonFlatten(props.data, props.rootPath));
+    const originFlatData = computed(() => jsonFlatten(props.data, props.rootPath, 0, void 0, props.replacer));
 
     const initHiddenPaths = (deep: number, collapsedNodeLength: number) => {
       return originFlatData.value.reduce((acc, item) => {

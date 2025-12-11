@@ -29,11 +29,17 @@ export function getDataType(value: unknown): string {
   return Object.prototype.toString.call(value).slice(8, -1).toLowerCase();
 }
 
+export function defaultReplacer(key?: string | symbol, value?: unknown): [string, unknown] {
+  const dataType = getDataType(value);
+  return [dataType, value];
+}
+
 export function jsonFlatten(
-  data: JSONDataType,
+  dataInput: JSONDataType,
   path = 'root',
   level = 0,
   options?: JSONFlattenOptions,
+  replacer = defaultReplacer
 ): JSONFlattenReturnType[] {
   const {
     key,
@@ -42,7 +48,7 @@ export function jsonFlatten(
     showComma = false,
     length = 1,
   } = options || ({} as JSONFlattenOptions);
-  const dataType = getDataType(data);
+  const [dataType, data] = replacer(key, dataInput);
 
   if (dataType === 'array') {
     const inner = arrFlat(
@@ -52,7 +58,7 @@ export function jsonFlatten(
           showComma: idx !== arr.length - 1,
           length,
           type,
-        }),
+        }, replacer),
       ),
     ) as JSONFlattenReturnType[];
     return [
@@ -61,14 +67,14 @@ export function jsonFlatten(
         key,
         length: (data as unknown[]).length,
         type: 'arrayStart',
-      })[0],
+      }, replacer)[0],
     ].concat(
       inner,
       jsonFlatten(']', path, level, {
         showComma,
         length: (data as unknown[]).length,
         type: 'arrayEnd',
-      })[0],
+      }, replacer)[0],
     );
   } else if (dataType === 'object') {
     const keys = Object.keys(data as Record<string, JSONDataType>);
@@ -84,6 +90,7 @@ export function jsonFlatten(
             length,
             type,
           },
+          replacer,
         ),
       ),
     ) as JSONFlattenReturnType[];
@@ -94,10 +101,10 @@ export function jsonFlatten(
         index,
         length: keys.length,
         type: 'objectStart',
-      })[0],
+      }, replacer)[0],
     ].concat(
       inner,
-      jsonFlatten('}', path, level, { showComma, length: keys.length, type: 'objectEnd' })[0],
+      jsonFlatten('}', path, level, { showComma, length: keys.length, type: 'objectEnd' }, replacer)[0],
     );
   }
 

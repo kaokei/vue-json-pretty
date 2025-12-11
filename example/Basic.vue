@@ -102,6 +102,7 @@
             ? state.useRenderNodeActionsSlot
             : undefined
         "
+        :replacer="replacer"
         style="position: relative"
       >
         <template v-if="state.useRenderNodeKeySlot" #renderNodeKey="{ node, defaultKey }">
@@ -133,7 +134,7 @@
 <script>
 import { defineComponent, reactive, watch } from 'vue';
 import { useDarkMode } from './useDarkMode';
-import VueJsonPretty from 'src';
+import VueJsonPretty, { defaultReplacer } from 'src';
 
 const defaultData = {
   status: 200,
@@ -204,12 +205,22 @@ export default defineComponent({
       },
     );
 
+    function replacer(key, value) {
+      if(value && typeof value === 'object') {
+        if(value.news_id === 51184) {
+          return ['number', 51184]
+        }
+      }
+      return defaultReplacer(key, value);
+    }
+
     return {
       state,
       pathCollapsible,
       localDarkMode,
       toggleLocalDarkMode,
       globalDarkModeState,
+      replacer,
     };
   },
 });
